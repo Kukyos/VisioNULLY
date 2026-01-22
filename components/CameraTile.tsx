@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Camera } from '../types';
+import { BACKEND_URL } from '../config';
 
 interface Props {
   camera: Camera;
@@ -16,6 +17,14 @@ const CameraTile: React.FC<Props> = ({ camera, onAlert, onView }) => {
       relative h-48 rounded-none border border-zinc-800 transition-all duration-500 overflow-hidden group
       ${isAlert ? 'bg-white text-black border-white scale-[1.02] z-10' : 'bg-black text-white hover:border-zinc-500'}
     `}>
+      {/* Optional live stream for primary camera */}
+      {camera.id === 'cam-0' && (
+        <img
+          src={`${BACKEND_URL}/video_feed`}
+          alt="Live stream"
+          className={`absolute inset-0 w-full h-full object-cover ${isAlert ? 'opacity-60' : 'opacity-30'} pointer-events-none`}
+        />
+      )}
       <div className="absolute top-4 left-4 flex flex-col">
         <span className="text-[10px] font-mono tracking-tighter opacity-50">{camera.id}</span>
         <span className="font-display font-bold text-lg uppercase tracking-tight">{camera.room}</span>
@@ -29,12 +38,14 @@ const CameraTile: React.FC<Props> = ({ camera, onAlert, onView }) => {
       </div>
 
       <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-        {/* Activity Waveform (Abstracted) */}
-        <div className="flex items-end gap-[2px] h-8 opacity-30">
-          {camera.buffer.slice(-10).map((f, i) => (
-            <div key={f.id} className={`w-1 ${isAlert ? 'bg-black' : 'bg-white'}`} style={{ height: `${f.intensity}%` }}></div>
-          ))}
-        </div>
+        {/* Activity Waveform (Abstracted) - hidden when live stream present */}
+        {camera.id !== 'cam-0' && (
+          <div className="flex items-end gap-[2px] h-8 opacity-30">
+            {camera.buffer.slice(-10).map((f) => (
+              <div key={f.id} className={`w-1 ${isAlert ? 'bg-black' : 'bg-white'}`} style={{ height: `${f.intensity}%` }}></div>
+            ))}
+          </div>
+        )}
 
         {isAlert ? (
           <button 

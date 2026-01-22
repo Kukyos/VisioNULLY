@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSimulation } from './hooks/useSimulation';
 import CameraTile from './components/CameraTile';
 import AlertTimeline from './components/AlertTimeline';
 import ArchiveSidebar from './components/ArchiveSidebar';
 import { EventLog } from './types';
+import { BACKEND_URL } from './config';
 
 const App: React.FC = () => {
   const { cameras, triggerAlert, clearAlert, activeAlertId } = useSimulation();
@@ -29,6 +30,31 @@ const App: React.FC = () => {
   };
 
   const selectedCamera = cameras.find(c => c.id === viewingAlertId);
+
+  // Subscribe to backend fall events (SSE)
+  useEffect(() => {
+    const src = new EventSource(`${BACKEND_URL}/events`);
+    src.addEventListener('fall', (ev: MessageEvent) => {
+      try {
+        const data = JSON.parse(ev.data);
+        const id = data.cameraId || 'cam-0';
+        triggerAlert(id);
+        setViewingAlertId(id);
+        const cam = cameras.find(c => c.id === id) || { room: 'CAM-0', id, status: 'ALERT', buffer: [] } as any;
+        setLogs(prev => [{
+          id: `ev-${Date.now()}`,
+          room: cam.room,
+          time: new Date().toLocaleTimeString(),
+          type: 'FALL DETECTED'
+        }, ...prev]);
+      } catch {}
+    });
+    src.onerror = () => {
+      // Keep quiet; user can start backend when ready
+    };
+    return () => src.close();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="flex w-full h-screen bg-black text-white overflow-hidden">
