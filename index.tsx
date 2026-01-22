@@ -1,7 +1,10 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { IncidentProvider } from './context/IncidentContext';
 import App from './App';
+import DemoPage from './pages/DemoPage';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -11,6 +14,13 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <IncidentProvider>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/demo" element={<DemoPage />} />
+        </Routes>
+      </IncidentProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );

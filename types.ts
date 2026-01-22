@@ -19,6 +19,8 @@ export interface EventLog {
   room: string;
   time: string;
   type: string;
+  reviewedAt?: string;
+  notes?: string;
 }
 
 // Fixed error in components/Sidebar.tsx: Module '"../types"' has no exported member 'StoredEvent'.
