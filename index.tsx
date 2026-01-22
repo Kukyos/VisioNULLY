@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { IncidentProvider } from './context/IncidentContext';
 import App from './App';
 import DemoPage from './pages/DemoPage';
+import FeedPage from './components/FeedPage';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -19,6 +20,7 @@ root.render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/demo" element={<DemoPage />} />
+          <Route path="/feed" element={<FeedPage />} />
         </Routes>
       </IncidentProvider>
     </BrowserRouter>
