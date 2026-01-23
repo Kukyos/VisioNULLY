@@ -10,7 +10,8 @@ export const useSimulation = () => {
       id: `cam-${i}`,
       room,
       status: 'MONITORING',
-      buffer: []
+      buffer: [],
+      visualBuffer: []
     }))
   );
   
@@ -23,15 +24,14 @@ export const useSimulation = () => {
         const newFrame: BufferFrame = {
           id: frameCounter.current++,
           timestamp: Date.now(),
-          intensity: Math.random() * 100
+          intensity: 10 + Math.random() * 80
         };
-        // Keep last 30 frames (ephemeral buffer)
         return {
           ...cam,
           buffer: [...cam.buffer, newFrame].slice(-30)
         };
       }));
-    }, 300);
+    }, 400);
     return () => clearInterval(interval);
   }, []);
 
@@ -45,5 +45,18 @@ export const useSimulation = () => {
     if (activeAlertId === id) setActiveAlertId(null);
   };
 
-  return { cameras, triggerAlert, clearAlert, activeAlertId };
+  const linkStream = (id: string, url: string) => {
+    setCameras(prev => prev.map(cam => cam.id === id ? { 
+      ...cam, 
+      streamUrl: url, 
+      lastError: undefined,
+      isLinking: !!url 
+    } : cam));
+  };
+
+  const setCameraError = (id: string, error: string) => {
+    setCameras(prev => prev.map(cam => cam.id === id ? { ...cam, lastError: error, isLinking: false } : cam));
+  };
+
+  return { cameras, triggerAlert, clearAlert, linkStream, setCameraError, activeAlertId };
 };

@@ -1,5 +1,7 @@
 {
-  "name": "EdgeGuard Privacy-First Fall Detection",
-  "description": "An interactive demo of a privacy-focused fall detection system that uses rolling RAM buffers and automatic data destruction to ensure safety without surveillance.",
-  "requestFramePermissions": []
+  "name": "VisioNULL | Privacy-First Vision",
+  "description": "An interactive demo of a privacy-focused fall detection system that uses rolling RAM buffers and automatic data destruction.",
+  "requestFramePermissions": [
+    "camera"
+  ]
 }
